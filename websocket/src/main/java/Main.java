@@ -43,7 +43,7 @@ public class Main {
 		webSocketServer.start();
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Appuyez sur n'importe quelle touche pour arreter le serveur...");
+		System.out.println("Appuyez sur n'importe quelle touche (et Entrer) pour arreter le serveur...");
 		reader.readLine();
 	}
 }

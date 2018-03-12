@@ -17,6 +17,8 @@ Ensuite clic-droit sur "Ce PC" -> "Propiétés" -> "Paramètres système avancé
 Dans "Variables système", aller sur le "Path" et "Modifier" (une fenêtre "Modifier la variable d'environnement"
 "Nouveau" et entrer le chemin du Gradle (Par exemple: C:\Gradle\gradle-4.6\bin)
 
+Redémarrer GitBash
+
 Pour vérifier si Gradle est bien installer aller sur le GitBash et entrer gradle -v
 
 Une fois ceci fait, dans le GitBash aller dans le dossier "websocket" avec les commandes cd
