@@ -48,7 +48,7 @@ public class Main {
 
 		try {
 
-			String url = "jdbc:mysql://localhost:3306/chatapplication_db";
+			String url = "jdbc:mysql://localhost:3306/chatapplication_db?useUnicode=true&useJDBCComplianTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 			String user = "root";
 			String passwd = "";
 
