@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 import javax.websocket.DeploymentException;
 
@@ -16,6 +18,8 @@ public class Main {
 
 
 	private Main() throws DeploymentException, IOException {
+
+
 		WebSocketServer<String> webSocketServer = WebSocketServer.get("localhost", 8083, String.class);
 		
 		webSocketServer.addListener(new OpenWebSocketListener<String>() {
@@ -39,11 +43,28 @@ public class Main {
 					System.out.println(message);
 				}
 		});
-		
+
 		webSocketServer.start();
+
+		try {
+
+			String url = "jdbc:mysql://localhost:3306/chatapplication_db";
+			String user = "root";
+			String passwd = "";
+
+			DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+			Connection conn = DriverManager.getConnection(url, user, passwd);
+			System.out.println("Connexion effective !");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Appuyez sur n'importe quelle touche (et Entrer) pour arreter le serveur...");
 		reader.readLine();
+
+
+
 	}
 }
