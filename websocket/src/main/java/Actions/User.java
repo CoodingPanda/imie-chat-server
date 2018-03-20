@@ -1,10 +1,12 @@
+package Actions;
+
 public class Utilisateur extends NonConnecter {
     private int id = 0;
-    private String nom = "";
-    private String prenom = "";
-    private String email = "";
-    private String ville = "";
-    private String password = "";
+    private String nom;
+    private String prenom;
+    private String email;
+    private String ville;
+    private String password;
 
 
     public int getId() {
