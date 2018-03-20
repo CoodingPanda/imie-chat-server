@@ -1,3 +1,4 @@
+package Actions;
 
 public class Action {
 
@@ -7,5 +8,6 @@ public class Action {
     public String getType() {
         return Type;
     }
+
 
 }

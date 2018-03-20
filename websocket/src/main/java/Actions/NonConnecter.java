@@ -1,3 +1,5 @@
+package Actions;
+
 import Actions.Action;
 
 public class NonConnecter extends Action {

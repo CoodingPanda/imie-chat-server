@@ -1,32 +1,34 @@
+package Actions;
+
 import Actions.Action;
 
 public class Inscription extends Action {
 
     private String Name;
-    private String Firstname;
-    private String Mail;
+    private String FirstName;
+    private String Email;
     private String City;
-    private String Pseudo;
+    private String Username;
     private String Password;
 
     public String getName() {
         return Name;
     }
 
-    public String getFirstname() {
-        return Firstname;
+    public String getFirstName() {
+        return FirstName;
     }
 
-    public String getMail() {
-        return Mail;
+    public String getEmail() {
+        return Email;
     }
 
     public String getCity() {
         return City;
     }
 
-    public String getPseudo() {
-        return Pseudo;
+    public String getUsername() {
+        return Username;
     }
 
     public String getPassword() {
@@ -37,20 +39,20 @@ public class Inscription extends Action {
         Name = name;
     }
 
-    public void setFirstname(String firstname) {
-        Firstname = firstname;
+    public void setFirstName(String firstName) {
+        FirstName = firstName;
     }
 
-    public void setMail(String mail) {
-        Mail = mail;
+    public void setEmail(String email) {
+        Email = email;
     }
 
     public void setCity(String city) {
         City = city;
     }
 
-    public void setPseudo(String pseudo) {
-        Pseudo = pseudo;
+    public void setUsername(String username) {
+        Username = username;
     }
 
     public void setPassword(String password) {

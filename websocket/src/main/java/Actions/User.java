@@ -1,6 +1,6 @@
 package Actions;
 
-public class Utilisateur extends NonConnecter {
+public class User extends NonConnecter {
     private int id = 0;
     private String nom;
     private String prenom;
