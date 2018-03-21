@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: fr.imie:chat-websocket-server-specification:0.1.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/fr.imie/chat-websocket-server-specification/0.1.1/dd072311f539e070d4e5808f54e1e41b59dfdae1/chat-websocket-server-specification-0.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/fr.imie/chat-websocket-server-specification/0.1.1/7264837cca1bec3a0c9b59e495c06dc694f2d75e/chat-websocket-server-specification-0.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
