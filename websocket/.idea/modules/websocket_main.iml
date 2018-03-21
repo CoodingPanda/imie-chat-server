@@ -10,6 +10,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: mysql:mysql-connector-java:6.0.6" level="project" />
-    <orderEntry type="library" name="Gradle: fr.imie:chat-websocket-server-specification:0.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: fr.imie:chat-websocket-server-specification:0.1.1" level="project" />
   </component>
 </module>

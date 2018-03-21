@@ -1,6 +1,6 @@
 package Actions;
 
-public class blabla extends Action {
+public class Connexion extends Action {
 
     private String Email;
     private String Password;

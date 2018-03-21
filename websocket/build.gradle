@@ -15,7 +15,7 @@ repositories {
  
 dependencies {
 	compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
-	compile group: "fr.imie", name: "chat-websocket-server-specification", version: "0.1.0"
+	compile group: "fr.imie", name: "chat-websocket-server-specification", version: "0.1.1"
 }
  
 run {

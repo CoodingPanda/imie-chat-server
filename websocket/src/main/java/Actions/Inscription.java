@@ -1,6 +1,5 @@
 package Actions;
 
-import Actions.Action;
 
 public class Inscription extends Action {
 

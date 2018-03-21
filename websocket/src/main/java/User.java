@@ -1,10 +1,11 @@
-package Actions;
+
 
 public class User {
 
+
     private String Email;
     private String Password;
-    private int idUser;
+    private int User_id;
     private String Username;
 
     public String getEmail() {
@@ -23,12 +24,12 @@ public class User {
         Password = password;
     }
 
-    public int getIdUser() {
-        return idUser;
+    public int getUser_id() {
+        return User_id;
     }
 
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
+    public void setUser_id(int user_id) {
+        User_id = user_id;
     }
 
     public String getUsername() {

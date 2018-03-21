@@ -11,7 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="websocket_main" />
     <orderEntry type="library" name="Gradle: mysql:mysql-connector-java:6.0.6" level="project" />
-    <orderEntry type="library" name="Gradle: fr.imie:chat-websocket-server-specification:0.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: fr.imie:chat-websocket-server-specification:0.1.1" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="websocket_main" />
 </module>
