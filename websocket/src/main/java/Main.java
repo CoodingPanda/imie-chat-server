@@ -9,6 +9,7 @@ import javax.websocket.DeploymentException;
 import Actions.Action;
 import Actions.Connexion;
 import Actions.Inscription;
+import Actions.Message;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -124,6 +125,58 @@ public class Main {
 
                                 // Exécution de la requête d'écriture
                                 int statut = statement.executeUpdate( "INSERT INTO user (Name, FirstName, City, Username, Email, Password) VALUES ('"+addUser.getName()+"', '"+addUser.getFirstName()+"', '"+addUser.getCity()+"', '"+addUser.getUsername()+"', '"+addUser.getEmail()+"', '"+addUser.getPassword()+"');" );
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (typeAction.getType().compareTo("Message") == 0) {
+                            Message textMessage = MAPPER.readValue(message, Message.class);
+
+                            System.out.println(textMessage.getTextmsg());
+
+                            // On se connecte à la base de données via la classe Connect
+                            Connection connexion = Connect.getConnection();
+
+                            ResultSet resultat = null;
+
+                            // Création de l'objet gérant les requêtes
+                            try {
+                                Statement statement = connexion.createStatement();
+
+                                // Exécution d'une requête de lecture
+                                resultat = statement.executeQuery("SELECT MessageCapacity FROM message WHERE Message_id='" + textMessage.getTextmsg() + "';");
+
+                                System.out.println("Requête \"SELECT MessageCapacity FROM message;\" effectuée !");
+
+                                /* Récupération des données du résultat de la requête de lecture */
+
+                                while (resultat.next()) {
+
+                                    String txtmess = resultat.getString("MessageCapacity");
+                                    String messagedate = resultat.getString("MessageDate");
+                                    int msg_id = resultat.getInt("Message_id");
+
+                                    System.out.println("Données retournées par la requête : Message = " + txtmess + ".");
+
+                                    // On va créer un objet message pour stocker son id et sa date
+
+                                    Message msg = new Message();
+                                    msg.setMsg_id(msg_id);
+                                    msg.setMessageDate(messagedate);
+
+
+                                    try {
+                                        String retour = MAPPER.writeValueAsString(msg);
+                                        webSocketServer.send(sessionId, retour);
+                                        System.out.println("Message en date du "+ messagedate + " : " +
+                                        msg);
+                                    } catch (SessionNotFoundException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                resultat.close();
+                                System.out.println("Message reçu !");
+
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
