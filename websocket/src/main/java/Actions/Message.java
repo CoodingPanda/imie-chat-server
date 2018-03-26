@@ -5,8 +5,7 @@ public class Message extends Action {
     private String Textmsg;
     private int Msg_id;
     private String MessageDate;
-
-
+    private String Sessionkey;
 
     public String getMessageDate() {
         return MessageDate;
@@ -30,5 +29,13 @@ public class Message extends Action {
 
     public void setMsg_id(int msg_id) {
         Msg_id = msg_id;
+    }
+
+    public String getSessionkey() {
+        return Sessionkey;
+    }
+
+    public void setSessionkey(String sessionkey) {
+        Sessionkey = sessionkey;
     }
 }

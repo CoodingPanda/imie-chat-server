@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.sql.*;
 
 
@@ -65,6 +67,7 @@ public class Main {
                             Connexion authentif = MAPPER.readValue(message, Connexion.class);
                             System.out.println("Message de " + sessionId + ": " + message);
 
+
                             System.out.println(authentif.getEmail());
 
                             // On se connecte à la base de données via la classe Connect
@@ -89,10 +92,28 @@ public class Main {
 
                                     System.out.println("Données retournées par la requête : User_id = " + user_id + ", Username = " + username + ".");
 
+                                    StringBuffer key_session = null;
+
+                                    try {
+                                        key_session = RandomKeyGen.generate();
+                                    } catch (NoSuchAlgorithmException e) {
+                                        e.printStackTrace();
+                                    } catch (NoSuchProviderException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    System.out.println(key_session);
+
+                                    // On enregistre la clé session en bdd
+                                    int statut = statement.executeUpdate("UPDATE user SET id_session = '"+key_session+"' WHERE Email = '"+ authentif.getEmail() + "' AND Password='" + authentif.getPassword() + "';");
+                                    System.out.println("Clé session enregistrée");
+
                                     // On va créer un objet user pour stocker l'id et le pseudo
                                     User user = new User();
                                     user.setUsername(username);
                                     user.setUser_id(user_id);
+                                    user.setKey_session(key_session);
+                                    user.setType("Connexion");
 
                                     //String retour = MAPPER.writeValueAsString(user);
 
@@ -119,73 +140,65 @@ public class Main {
                             // On se connecte à la base de données via la méthode getConnection() de la classe Connect
                             Connection connexion = Connect.getConnection();
 
+
                             // Création de l'objet gérant les requêtes
                             try {
                                 Statement statement = connexion.createStatement();
 
                                 // Exécution de la requête d'écriture
-                                int statut = statement.executeUpdate( "INSERT INTO user (Name, FirstName, City, Username, Email, Password) VALUES ('"+addUser.getName()+"', '"+addUser.getFirstName()+"', '"+addUser.getCity()+"', '"+addUser.getUsername()+"', '"+addUser.getEmail()+"', '"+addUser.getPassword()+"');" );
+                                int statut = statement.executeUpdate( "SELECT user (Name, FirstName, City, Username, Email, Password) VALUES ('"+addUser.getName()+"', '"+addUser.getFirstName()+"', '"+addUser.getCity()+"', '"+addUser.getUsername()+"', '"+addUser.getEmail()+"', '"+addUser.getPassword()+"');" );
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
                         }
                         if (typeAction.getType().compareTo("Message") == 0) {
                             Message textMessage = MAPPER.readValue(message, Message.class);
-
-                            System.out.println(textMessage.getTextmsg());
+                            System.out.println("Message de "+sessionId+": "+message);
 
                             // On se connecte à la base de données via la classe Connect
                             Connection connexion = Connect.getConnection();
 
                             ResultSet resultat = null;
-
                             // Création de l'objet gérant les requêtes
-                            try {
-                                Statement statement = connexion.createStatement();
 
-                                // Exécution d'une requête de lecture
-                                resultat = statement.executeQuery("SELECT MessageCapacity FROM message WHERE Message_id='" + textMessage.getTextmsg() + "';");
+                            Statement statement = connexion.createStatement();
 
-                                System.out.println("Requête \"SELECT MessageCapacity FROM message;\" effectuée !");
+                            // Exécution d'une requête de lecture
+                            resultat = statement.executeQuery("SELECT Username, User_id FROM User WHERE id_session='" + textMessage.getSessionkey() + "';");
+                            System.out.println("Requête \"SELECT Username FROM user;\" effectuée !");
 
-                                /* Récupération des données du résultat de la requête de lecture */
+                            while (resultat.next()) {
+                                int user_id = resultat.getInt("User_id");
+                                String username = resultat.getString("Username");
 
-                                while (resultat.next()) {
+                                System.out.print(user_id+username);
 
-                                    String txtmess = resultat.getString("MessageCapacity");
-                                    String messagedate = resultat.getString("MessageDate");
-                                    int msg_id = resultat.getInt("Message_id");
+                                int statut = statement.executeUpdate("INSERT INTO message (MessageCapacity, MessageDate, User_id) VALUES ('"+textMessage.getTextmsg()+"', CURDATE(), '"+user_id+"');");
 
-                                    System.out.println("Données retournées par la requête : Message = " + txtmess + ".");
-
-                                    // On va créer un objet message pour stocker son id et sa date
-
-                                    Message msg = new Message();
-                                    msg.setMsg_id(msg_id);
-                                    msg.setMessageDate(messagedate);
+                                // On va créer un objet de type 'envoimessage'
+                                EnvoiMessage envoimessage = new EnvoiMessage();
+                                envoimessage.setTextMsg(textMessage.getTextmsg());
+                                envoimessage.setUsername(username);
+                                envoimessage.setType("ServerMessage");
 
 
-                                    try {
-                                        String retour = MAPPER.writeValueAsString(msg);
-                                        webSocketServer.send(sessionId, retour);
-                                        System.out.println("Message en date du "+ messagedate + " : " +
-                                        msg);
-                                    } catch (SessionNotFoundException e) {
-                                        e.printStackTrace();
-                                    }
+
+                                try {
+                                    String retour = MAPPER.writeValueAsString(envoimessage);
+                                    webSocketServer.send(sessionId, retour);
+                                    System.out.println(retour);
+                                } catch (SessionNotFoundException e) {
+                                    e.printStackTrace();
                                 }
-                                resultat.close();
-                                System.out.println("Message reçu !");
-
-                            } catch (SQLException e) {
-                                e.printStackTrace();
                             }
                         }
                     }
                     catch(IOException e) {
                         System.out.println(e.getMessage());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
-                }
+            }
         });
 
 
