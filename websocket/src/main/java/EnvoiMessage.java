@@ -1,5 +1,6 @@
 public class EnvoiMessage {
-        private String textMsg;
+
+    private String textMsg;
     private String username;
     private String type;
 

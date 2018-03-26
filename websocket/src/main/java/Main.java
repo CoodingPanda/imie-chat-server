@@ -73,14 +73,18 @@ public class Main {
                             // On se connecte à la base de données via la classe Connect
                             Connection connexion = Connect.getConnection();
 
-                            ResultSet resultat = null;
+
 
                             // Création de l'objet gérant les requêtes
                             try {
-                                Statement statement = connexion.createStatement();
 
-                                // Exécution d'une requête de lecture
-                                resultat = statement.executeQuery("SELECT User_id, Username FROM User WHERE Email='" + authentif.getEmail() + "' AND Password='" + authentif.getPassword() + "';");
+
+                                // Exécution d'une requête de lecture pour éviter l'injection sql :
+                                PreparedStatement statement = connexion.prepareStatement("SELECT User_id, Username FROM User WHERE Email=? AND Password=?");
+                                statement.setString(1, authentif.getEmail());
+                                statement.setString(2, authentif.getPassword());
+
+                                ResultSet resultat = statement.executeQuery();
 
                                 System.out.println("Requête \"SELECT User_id, Username FROM User;\" effectuée !");
 
@@ -104,8 +108,15 @@ public class Main {
 
                                     System.out.println(key_session);
 
-                                    // On enregistre la clé session en bdd
-                                    int statut = statement.executeUpdate("UPDATE user SET id_session = '"+key_session+"' WHERE Email = '"+ authentif.getEmail() + "' AND Password='" + authentif.getPassword() + "';");
+                                    // On enregistre la clé session en bdd toujours en évitant l'injection sql
+                                    statement = connexion.prepareStatement("UPDATE user SET id_session = ? WHERE Email = ? AND Password= ? ;");
+
+                                    statement.setString(1, String.valueOf(key_session));
+                                    statement.setString(2, authentif.getEmail());
+                                    statement.setString(3, authentif.getPassword());
+
+                                    statement.executeUpdate();
+
                                     System.out.println("Clé session enregistrée");
 
                                     // On va créer un objet user pour stocker l'id et le pseudo
@@ -143,10 +154,19 @@ public class Main {
 
                             // Création de l'objet gérant les requêtes
                             try {
-                                Statement statement = connexion.createStatement();
 
                                 // Exécution de la requête d'écriture
-                                int statut = statement.executeUpdate( "SELECT user (Name, FirstName, City, Username, Email, Password) VALUES ('"+addUser.getName()+"', '"+addUser.getFirstName()+"', '"+addUser.getCity()+"', '"+addUser.getUsername()+"', '"+addUser.getEmail()+"', '"+addUser.getPassword()+"');" );
+                                PreparedStatement statement = connexion.prepareStatement( "INSERT INTO user (Name, FirstName, City, Username, Email, Password) VALUES (?, ?, ?, ?, ?, ?);" );
+
+                                statement.setString(1, addUser.getName());
+                                statement.setString(2, addUser.getFirstName());
+                                statement.setString(3, addUser.getCity());
+                                statement.setString(4, addUser.getUsername());
+                                statement.setString(5, addUser.getEmail());
+                                statement.setString(6, addUser.getPassword());
+
+                                statement.executeUpdate();
+
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
@@ -158,13 +178,14 @@ public class Main {
                             // On se connecte à la base de données via la classe Connect
                             Connection connexion = Connect.getConnection();
 
-                            ResultSet resultat = null;
-                            // Création de l'objet gérant les requêtes
-
-                            Statement statement = connexion.createStatement();
 
                             // Exécution d'une requête de lecture
-                            resultat = statement.executeQuery("SELECT Username, User_id FROM User WHERE id_session='" + textMessage.getSessionkey() + "';");
+                            PreparedStatement statement = connexion.prepareStatement("SELECT Username, User_id FROM User WHERE id_session= ? ;");
+
+                            statement.setString(1, textMessage.getSessionkey());
+
+                            ResultSet resultat = statement.executeQuery();
+
                             System.out.println("Requête \"SELECT Username FROM user;\" effectuée !");
 
                             while (resultat.next()) {
@@ -173,7 +194,13 @@ public class Main {
 
                                 System.out.print(user_id+username);
 
-                                int statut = statement.executeUpdate("INSERT INTO message (MessageCapacity, MessageDate, User_id) VALUES ('"+textMessage.getTextmsg()+"', CURDATE(), '"+user_id+"');");
+                                statement = connexion.prepareStatement("INSERT INTO message (MessageCapacity, MessageDate, User_id) VALUES (?, CURRENT_TIMESTAMP(), ?);");
+
+                                statement.setString(1, textMessage.getTextmsg());
+                                statement.setString(2, String.valueOf(user_id));
+
+                                statement.executeUpdate();
+
 
                                 // On va créer un objet de type 'envoimessage'
                                 EnvoiMessage envoimessage = new EnvoiMessage();
