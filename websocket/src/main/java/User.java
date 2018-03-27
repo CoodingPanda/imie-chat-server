@@ -3,28 +3,11 @@
 public class User {
 
 
-    private String Email;
-    private String Password;
     private int User_id;
     private String Username;
     private StringBuffer key_session;
     private String type;
 
-    public String getEmail() {
-        return Email;
-    }
-
-    public String getPassword() {
-        return Password;
-    }
-
-    public void setEmail(String email) {
-        Email = email;
-    }
-
-    public void setPassword(String password) {
-        Password = password;
-    }
 
     public int getUser_id() {
         return User_id;

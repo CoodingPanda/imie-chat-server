@@ -41,7 +41,14 @@ public class Main {
 				@Override
 				public void onOpen(String sessionId) {
 					System.out.println("Open " + sessionId);
-				}
+                    try {
+                        webSocketServer.send(sessionId, "pouet");
+                    } catch (SessionNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 		});
 		
 		webSocketServer.addListener(new CloseWebSocketListener<String>() {
@@ -68,23 +75,20 @@ public class Main {
                             System.out.println("Message de " + sessionId + ": " + message);
 
 
-                            System.out.println(authentif.getEmail());
-
                             // On se connecte à la base de données via la classe Connect
                             Connection connexion = Connect.getConnection();
-
 
 
                             // Création de l'objet gérant les requêtes
                             try {
 
-
                                 // Exécution d'une requête de lecture pour éviter l'injection sql :
-                                PreparedStatement statement = connexion.prepareStatement("SELECT User_id, Username FROM User WHERE Email=? AND Password=?");
+                                PreparedStatement statement = connexion.prepareStatement("SELECT User_id, Username FROM user WHERE Email=? AND Password=?");
                                 statement.setString(1, authentif.getEmail());
                                 statement.setString(2, authentif.getPassword());
 
                                 ResultSet resultat = statement.executeQuery();
+
 
                                 System.out.println("Requête \"SELECT User_id, Username FROM User;\" effectuée !");
 
@@ -106,7 +110,6 @@ public class Main {
                                         e.printStackTrace();
                                     }
 
-                                    System.out.println(key_session);
 
                                     // On enregistre la clé session en bdd toujours en évitant l'injection sql
                                     statement = connexion.prepareStatement("UPDATE user SET id_session = ? WHERE Email = ? AND Password= ? ;");
@@ -116,6 +119,7 @@ public class Main {
                                     statement.setString(3, authentif.getPassword());
 
                                     statement.executeUpdate();
+                                    statement.close();
 
                                     System.out.println("Clé session enregistrée");
 
@@ -192,12 +196,12 @@ public class Main {
                                 int user_id = resultat.getInt("User_id");
                                 String username = resultat.getString("Username");
 
-                                System.out.print(user_id+username);
 
-                                statement = connexion.prepareStatement("INSERT INTO message (MessageCapacity, MessageDate, User_id) VALUES (?, CURRENT_TIMESTAMP(), ?);");
+                                statement = connexion.prepareStatement("INSERT INTO message (MessageCapacity, MessageDate, User_id) VALUES (?, ?, ?);");
 
                                 statement.setString(1, textMessage.getTextmsg());
-                                statement.setString(2, String.valueOf(user_id));
+                                statement.setString(2, textMessage.getMessageDate());
+                                statement.setString(3, String.valueOf(user_id));
 
                                 statement.executeUpdate();
 
@@ -207,8 +211,6 @@ public class Main {
                                 envoimessage.setTextMsg(textMessage.getTextmsg());
                                 envoimessage.setUsername(username);
                                 envoimessage.setType("ServerMessage");
-
-
 
                                 try {
                                     String retour = MAPPER.writeValueAsString(envoimessage);
